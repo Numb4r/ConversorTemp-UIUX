@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:velocity_x/velocity_x.dart";
-import 'package:conversortemp/pages/convertionTempPage.dart';
+import 'package:conversortemp/pages/convertionTempPage.dart' as ctp;
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,7 +11,8 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: const Text("AppBar"),
       ),
-      body: ConvertionTemp(),
+      body: const ctp.ConvertionTemp(),
+      floatingActionButton: ctp.floating(context),
       drawer: Drawer(
         child: ListView(
           children: const [

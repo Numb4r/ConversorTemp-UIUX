@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:flutter_tts/flutter_tts_web.dart';
 
 final _firstTextField = TextEditingController();
 final _secondTextField = TextEditingController();
+FlutterTts ftts = FlutterTts();
 
 List<String> typeConvertion = ["Celsius", "Farehehe", "Kelvin"];
 
@@ -36,29 +39,40 @@ List<List<Function>> matrixConvertion = [
   ],
   [kelvinToCelcius, (e) => celsiusToFahrenheit(kelvinToCelcius(e)), (e) => e]
 ];
-onChangeTextTemp() {
+onChangeTextTemp() async {
   if (_firstTextField.text.isEmpty) {
     return null;
   }
-  double toTemp;
-  double fromTemp;
-  int fromType;
-  int toType;
-
-  fromTemp = double.parse(_firstTextField.text);
-  fromType = typeConvertion.indexOf(_firstSelection);
-  toType = typeConvertion.indexOf(_secondSelection);
-
-  toTemp = matrixConvertion[fromType][toType](fromTemp);
-
+  var result = await ftts.stop();
+  await ftts.setLanguage("pt-BR");
+  double fromTemp = double.parse(_firstTextField.text);
+  int fromType = typeConvertion.indexOf(_firstSelection);
+  int toType = typeConvertion.indexOf(_secondSelection);
+  double toTemp = matrixConvertion[fromType][toType](fromTemp);
   _secondTextField.text = toTemp.toString();
+  var cu = TtsState.stopped;
 }
 
 class ConvertionTemp extends StatefulWidget {
   const ConvertionTemp({Key? key}) : super(key: key);
-
   @override
   State<ConvertionTemp> createState() => _ConvertionTempState();
+}
+
+FloatingActionButton floating(context) {
+  return FloatingActionButton(
+      child: const Icon(Icons.volume_up),
+      onPressed: () async {
+        var result = await ftts.stop();
+        if (_firstTextField.text.isNotEmpty) {
+          double fromTemp = double.parse(_firstTextField.text);
+          double toTemp = double.parse(_secondTextField.text);
+          if (result == 1) {
+            await ftts.speak(
+                "$fromTemp em $_firstSelection 'é' $toTemp em $_secondSelection");
+          }
+        }
+      });
 }
 
 class _ConvertionTempState extends State<ConvertionTemp> {
